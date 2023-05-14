@@ -2,16 +2,19 @@ import KioskBoard from 'kioskboard';
 import {useEffect, useRef, useState} from "react";
 import 'kioskboard/dist/kioskboard-keys-english.json'
 import {motion} from "framer-motion"
-import {useSelector} from "react-redux";
-import {selectCart} from "../../../../store/reducers/cartReducers.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {clearCart, depositedCart, selectCart} from "../../../../store/reducers/cartReducers.ts";
+import LoadingCover from "../../../../components/LoadingCover/loadingCover.tsx";
+import useFetch, {fetchProps} from "../../../../Hooks/useFetch.ts";
 
-const Cashier = () => {
+const PayInCash = () => {
     const cart = useSelector(selectCart)
     const inputReceiveRef = useRef<HTMLInputElement>()
-    const [receive, setReceive] = useState(0)
+
+
+    const dispatch = useDispatch()
     useEffect(()=>{
         if (inputReceiveRef.current) KioskBoard.run(inputReceiveRef.current, {
-
   /*!
   * Required
   * An Array of Objects has to be defined for the custom keys. Hint: Each object creates a row element (HTML) on the keyboard.
@@ -92,14 +95,38 @@ const Cashier = () => {
   keysEnterText: 'Enter',
 
   // The callback function of the Enter key. This function will be called when the enter key has been clicked.
-  keysEnterCallback: undefined,
+  keysEnterCallback: ()=> {
+      dispatch(depositedCart(parseFloat(inputReceiveRef?.current?.value) || 0))
+      inputReceiveRef.current.value = "";
+  },
 
   // The Enter key can close and remove the keyboard. Prevented when "false"
   keysEnterCanClose: true,
 });
-    }, [inputReceiveRef])
+    }, [dispatch, inputReceiveRef])
 
-    console.log(inputReceiveRef?.current?.value)
+    const [fetchProps, setFetch] = useState<fetchProps>({
+        method: "get",
+        path: "",
+        fetchFor: "connect"
+    })
+    const {data, isLoading, isError} = useFetch(fetchProps);
+
+
+    const confirmHandler = ()=> {
+        setFetch({
+            method: "post",
+            path: "/sale/cart",
+            fetchFor: "checkout",
+            sendData: {
+                foods: cart.items,
+                cartId: cart.id,
+                paymentMethod: cart.paymentMethod
+            }
+        })
+
+        if (!isError) dispatch(clearCart())
+    }
 
     return (
         <motion.div
@@ -109,12 +136,14 @@ const Cashier = () => {
                 opacity: cart.state == "checkout" ? 1 : 0,
                 display: cart.state =="checkout" ? "flex" : "none"
         }}>
+            <LoadingCover visible={isLoading}/>
             <motion.div
                 className={"bg-white p-6 shadow transition-all h-fit border border-sky-100"}
             >
                 <h3>Receive</h3>
                 <input className="mt-2 w-full border border-sky-200 p-4 text-xl" data-kioskboard-type="numpad" data-kioskboard-placement="bottom"
-                    placeholder="Receive"
+                       type={"number"}
+                        placeholder="Receive"
                        ref={inputReceiveRef}
                 />
             </motion.div>
@@ -122,12 +151,33 @@ const Cashier = () => {
                 <div>
                     <div className={"flex justify-between gap-2"}>
                         <h2>Received</h2>
-                        <p className={"text-xl"}>{receive.toLocaleString(undefined, {minimumFractionDigits:2})} VND</p>
+                        <p className={"text-xl"}>{cart.deposited.toLocaleString(undefined, {minimumFractionDigits:2})} VND</p>
                     </div>
+                    {cart.deposited > cart.subtotal && <div className={"flex justify-between gap-2"}>
+                        <h3>Change</h3>
+                        <p className={"text-xl"}>{(cart.subtotal - cart.deposited).toLocaleString(undefined, {minimumFractionDigits: 2})} VND</p>
+                    </div>}
+                    {
+                        cart.deposited < cart.subtotal &&
+                        <div className={"flex justify-between gap-2"}>
+                            <h3>Remaining</h3>
+                            <p className={"text-xl"}>{(cart.subtotal - cart.deposited).toLocaleString(undefined, {minimumFractionDigits: 2})} VND</p>
+                        </div>
+                    }
+
+                    {
+                        cart.deposited >= cart.subtotal && (
+                            <button className={"mt-10 w-full bg-blue-100 hover:bg-blue-900 hover:text-white text-blue-900 p-3 rounded text-xl transition-all"}
+                                onClick={confirmHandler}
+                            >
+                                Confirm paid
+                            </button>
+                        )
+                    }
                 </div>
             </motion.div>
         </motion.div>
     );
 };
 
-export default Cashier;
+export default PayInCash;

@@ -5,6 +5,7 @@ import {Route, Routes} from "react-router-dom";
 import Home from "./Home/home.tsx";
 import {useSelector} from "react-redux";
 import {cartSplice, selectCart} from "../../store/reducers/cartReducers.ts";
+import Orders from "./Orders/orders.tsx";
 
 const Validated = () => {
     const cart = useSelector(selectCart)
@@ -19,6 +20,7 @@ const Validated = () => {
             <div className={"flex-grow pr-4 h-screen overflow-y-scroll overflow-hidden"}>
                 <Routes>
                     <Route path={"/"} element={<Home/>}/>
+                    <Route path={"/orders"} element={<Orders/>} />
                 </Routes>
             </div>
         </div>

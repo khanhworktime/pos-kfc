@@ -1,5 +1,4 @@
 import {motion} from 'framer-motion'
-import {VscDiffAdded, VscDiffRemoved} from "react-icons/vsc";
 import useFetch from "../../../../Hooks/useFetch.ts";
 import {useEffect, useState} from "react";
 import NoDataFound from "../../../../components/NoDataFound/noDataFound.tsx";
@@ -29,7 +28,7 @@ export interface foodListProps {
     categories: Array<{name:string, label: string}>
 }
 
-const FoodList = (props) => {
+const FoodList = (props: foodListProps) => {
     const {filter, categories} = props
     const dispatch = useDispatch()
     const cart = useSelector(selectCart)

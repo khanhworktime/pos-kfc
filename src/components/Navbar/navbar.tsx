@@ -7,6 +7,7 @@ import env from "../../env";
 import {RxCaretLeft} from "react-icons/rx";
 import { motion } from 'framer-motion';
 import {FaReceipt} from "react-icons/fa";
+import Clock from "../Clock/clock.tsx";
 const Navbar = () => {
     const [page, setPage] = useState(window.location.pathname);
     const navigate = useNavigate()
@@ -30,7 +31,7 @@ const Navbar = () => {
 
     return (
         <motion.div
-            className={" rounded-r-md bg-white h-screen gap-6 drop-shadow-md hidden sm:flex flex-col p-6 justify-between relative"}
+            className={"rounded-r-md bg-white h-screen gap-6 drop-shadow-md hidden sm:flex md:flex flex-col p-6 justify-between relative"}
             animate={{width: animateCall.isCollapse ? 60 : 250, padding: animateCall.isCollapse ? 4 : 24}}
         >
 
@@ -60,8 +61,9 @@ const Navbar = () => {
                 </div>
             </div>
             {/*Sub function*/}
-            <div>
-                <div className={animateCall.isCollapse ? "hidden" : ""}>
+            <div className={animateCall.isCollapse ? "hidden" : ""}>
+                <Clock/>
+                <div >
                     Welcome
                     <p className={"font-semibold text-xl"}>
                         {user.name}</p>

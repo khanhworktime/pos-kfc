@@ -1,21 +1,22 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import axios from "axios";
 import env from "../env";
 import {toast} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 
 export interface fetchProps {
-    method?: "get" | "post" | "delete" | "put"
+    method?: "get" | "post" | "delete" | "put" | "head" | "patch"
     path: string,
-    sendData?: any,
-    query?: any,
+    sendData?: object,
+    query?: object,
     fetchFor?: string,
     reFetch?: boolean,
     isNotify? : boolean
 }
 
 export default function useFetch(props:fetchProps){
-    let {path, method, sendData, query, reFetch, isNotify, fetchFor} = props
+    const {path, method, sendData, query, reFetch, fetchFor} = props
+    let {isNotify} = props
     const [data, setData] = useState(undefined);
     const [isLoading, setLoading] = useState(false);
     const [isError, setError] = useState(undefined);
@@ -30,12 +31,13 @@ export default function useFetch(props:fetchProps){
     // @ts-ignore
     const toastError = (e) => toast.update(toastId.current, {type: toast.TYPE.ERROR, autoClose: 800, render: e})
     const navigate = useNavigate()
+
     useEffect(()=>{
         if (path == "") return;
         (async function() {
             try {
                 setLoading(true);
-                if (props.method != "get" && isNotify){
+                if (method != "get" && isNotify){
                     notify("Working on it...");
                 }
                 const res = await axios({
@@ -46,7 +48,7 @@ export default function useFetch(props:fetchProps){
                 })
                 if (res.data.success == false && isNotify) setError(res.data.message)
                 setData(res.data)
-            } catch (e:any) {
+            } catch (e: any) {
                 // @ts-ignore
                 (async ()=>{setError(e.message)})()
                     .then(()=>{
@@ -58,7 +60,6 @@ export default function useFetch(props:fetchProps){
                 if (isError == null && isNotify) toastSuccess()
             }
         })()
-    }, [path, method, sendData, query, reFetch])
-
+    }, [path, method, sendData, reFetch, isNotify, navigate, isError])
     return {data, isLoading, isError, fetchFor}
 }

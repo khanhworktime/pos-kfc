@@ -63,7 +63,7 @@ const Category = (props) => {
     </div>
 )}
 
-const CategoryList = () => {
+const CategoryAndFood = () => {
     const cart = useSelector(selectCart)
     const [categories, setCategories] = useState<Array<{ name: string, label: string }>>([])
     const {data} = useFetch({
@@ -102,4 +102,4 @@ const CategoryList = () => {
     );
 };
 
-export default CategoryList;
+export default CategoryAndFood;

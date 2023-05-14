@@ -1,13 +1,13 @@
-import CategoryList from "./Menu/categoryList.tsx";
+import CategoryAndFood from "./Menu/categoryAndFood.tsx";
 import Receipt from "./Receipt/receipt.tsx";
-import Cashier from "./Cashier/cashier.tsx";
+import PayInCash from "./Cashier/payInCash.tsx";
 
 const Home = () => {
     return (
         <div className={"flex gap-4 py-4 h-full"}>
-            <CategoryList/>
+            <CategoryAndFood/>
             <Receipt/>
-            <Cashier/>
+            <PayInCash/>
         </div>
     );
 };
