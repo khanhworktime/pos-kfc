@@ -19,7 +19,6 @@ function Clock() {
       <span>{hours}</span>:
       <span>{minutes}</span>:
       <span>{seconds}</span>
-        <span>{parseFloat(hours) >= 12 ? " PM" : " AM"}</span>
     </div>
   );
 }
