@@ -1,11 +1,14 @@
 import KioskBoard from 'kioskboard';
-import {useEffect, useRef, useState} from "react";
+import {LegacyRef, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import 'kioskboard/dist/kioskboard-keys-english.json'
 import {motion} from "framer-motion"
 import {useDispatch, useSelector} from "react-redux";
 import {clearCart, depositedCart, selectCart} from "../../../../store/reducers/cartReducers.ts";
 import LoadingCover from "../../../../components/LoadingCover/loadingCover.tsx";
 import useFetch, {fetchProps} from "../../../../Hooks/useFetch.ts";
+import {ComponentToPrint} from "../../../../components/ComponentToPrint/componentToPrint.tsx";
+import {useReactToPrint} from "react-to-print";
+import IReceipt from "../../../../interfaces/receiptInterface.ts";
 
 const PayInCash = () => {
     const cart = useSelector(selectCart)
@@ -112,7 +115,23 @@ const PayInCash = () => {
     })
     const {data, isLoading, isError} = useFetch(fetchProps);
 
+    const qrValue = useMemo(()=>{
+        return `2|99|0822223471|Mai Van Trong Nghia||0|0|${cart.subtotal}||transfer_myqr`
+    }, [cart])
 
+    const componentRef:LegacyRef<ComponentToPrint> = useRef(null);
+
+    const reactToPrintContent = useCallback(() => {
+        return componentRef.current
+  }, [componentRef.current]);
+
+
+    const handlePrint = useReactToPrint({
+        content: reactToPrintContent,
+        onAfterPrint: ()=> {
+            dispatch(clearCart())
+        }
+    })
     const confirmHandler = ()=> {
         setFetch({
             method: "post",
@@ -125,7 +144,13 @@ const PayInCash = () => {
             }
         })
 
-        if (!isError) dispatch(clearCart())
+        handlePrint();
+    }
+    const template:IReceipt = {
+        state: "paid",
+        paymentMethod: cart.paymentMethod,
+        foods: cart.items,
+        total: cart.subtotal
     }
 
     return (
@@ -136,6 +161,9 @@ const PayInCash = () => {
                 opacity: cart.state == "checkout" ? 1 : 0,
                 display: cart.state =="checkout" ? "flex" : "none"
         }}>
+            <div className={"hidden"}>
+                <ComponentToPrint receipt={template} ref={componentRef}/>
+            </div>
             <LoadingCover visible={isLoading}/>
             <motion.div
                 className={"bg-white p-6 shadow transition-all h-fit border border-sky-100"}

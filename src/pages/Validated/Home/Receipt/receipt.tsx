@@ -278,7 +278,7 @@ const Receipt = () => {
                             </div>
                             <motion.p className={"text-sm text-center"}
                                 animate={{textDecoration: paymentMethod == "qr" ? "underline" : "none", fontWeight: paymentMethod == "qr" ? 600 : 300}}
-                            >E-Wallet</motion.p>
+                            >Momo</motion.p>
                         </div>
                     </div>
                     <div className={"transition-all flex gap-4"}>
