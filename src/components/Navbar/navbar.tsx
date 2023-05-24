@@ -6,7 +6,7 @@ import axios from "axios";
 import env from "../../env";
 import {RxCaretLeft} from "react-icons/rx";
 import { motion } from 'framer-motion';
-import {FaReceipt} from "react-icons/fa";
+import {FaReceipt, FaThList} from "react-icons/fa";
 import Clock from "../Clock/clock.tsx";
 const Navbar = () => {
     const [page, setPage] = useState(window.location.pathname);
@@ -57,6 +57,13 @@ const Navbar = () => {
                         <motion.div
                             animate={{display: animateCall.isCollapse ? "none" : "block"}}
                         >Orders</motion.div>
+                    </Link>
+                    <Link to={'/reports'}
+                          className={"flex items-center gap-2 "+ styles[page.includes("reports") ? "navActive" : "navItem"]}>
+                        <FaThList className={"block "}/>
+                        <motion.div
+                            animate={{display: animateCall.isCollapse ? "none" : "block"}}
+                        >Reports</motion.div>
                     </Link>
                 </div>
             </div>

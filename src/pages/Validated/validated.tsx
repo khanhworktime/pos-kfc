@@ -6,6 +6,7 @@ import Home from "./Home/home.tsx";
 import {useSelector} from "react-redux";
 import {cartSplice, selectCart} from "../../store/reducers/cartReducers.ts";
 import Orders from "./Orders/orders.tsx";
+import Reports from "./Report/report.tsx"
 
 const Validated = () => {
     const cart = useSelector(selectCart)
@@ -21,6 +22,7 @@ const Validated = () => {
                 <Routes>
                     <Route path={"/"} element={<Home/>}/>
                     <Route path={"/orders"} element={<Orders/>} />
+                    <Route path={"/reports"} element={<Reports />} />
                 </Routes>
             </div>
         </div>

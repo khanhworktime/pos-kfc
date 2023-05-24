@@ -5,5 +5,6 @@ export default interface IReceipt {
     create_at?: string,
     state: "paid" | "pending" | "cancel" | "done",
     paymentMethod: "cash" | "qr" | "card",
-    foods: Array<IFood>
+    foods: Array<IFood>,
+    total?: number
 }

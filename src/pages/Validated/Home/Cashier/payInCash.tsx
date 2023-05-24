@@ -151,7 +151,7 @@ const PayInCash = () => {
                 <div>
                     <div className={"flex justify-between gap-2"}>
                         <h2>Received</h2>
-                        <p className={"text-xl"}>{cart.deposited.toLocaleString(undefined, {minimumFractionDigits:2})} VND</p>
+                        <p className={"text-xl"}>{cart.deposited.toLocaleString(undefined, {minimumFractionDigits: 2})} VND</p>
                     </div>
                     {cart.deposited > cart.subtotal && <div className={"flex justify-between gap-2"}>
                         <h3>Change</h3>
@@ -170,7 +170,7 @@ const PayInCash = () => {
                             <button className={"mt-10 w-full bg-blue-100 hover:bg-blue-900 hover:text-white text-blue-900 p-3 rounded text-xl transition-all"}
                                 onClick={confirmHandler}
                             >
-                                Confirm paid
+                                Confirm Paid
                             </button>
                         )
                     }

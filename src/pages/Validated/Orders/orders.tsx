@@ -4,8 +4,8 @@ import IReceipt from "../../../interfaces/receiptInterface.ts";
 import {motion} from "framer-motion";
 import {Button} from "@mui/material";
 
-const OrderItem = (props: {order: IReceipt, index: number, fetcher: CallableFunction})=>{
-    const {order, index, fetcher} = props
+const OrderItem = (props: {order: IReceipt, index: number, fetcher: CallableFunction, isBlock: boolean})=>{
+    const {order, index, fetcher, isBlock} = props
 
     const time = new Date(order.create_at).toLocaleString("vi-VN", {timeZone: "Asia/Ho_Chi_Minh"})
 
@@ -25,12 +25,12 @@ const OrderItem = (props: {order: IReceipt, index: number, fetcher: CallableFunc
             colorFlag = "border-green-400"
             break;
     }
-
     return (
         <div className={"relative w-full"}>
             <div className={"bg-white w-full p-6 rounded shadow hover:shadow-xl border-t-8 transition-all cursor-pointer"+ " " + colorFlag}
-                onClick={()=> state == "paid" && setOpenEdit(prev => !prev)}
+                onClick={()=> state == "paid" && !isBlock && setOpenEdit(prev => !prev)}
             >
+                        <p>{state == "paid" ? "Kitchen → Deliver" : state == "done" ? "Finished" : "Cancel"}</p>
                         <h2>#{index.toString().padStart(4, "0")}</h2>
                         <p className={"mb-2"}>{time}</p>
                         <code>
@@ -43,6 +43,9 @@ const OrderItem = (props: {order: IReceipt, index: number, fetcher: CallableFunc
                                 ))
                             }
                         </code>
+                        <p  className={"mt-4 text-right"}>
+                            Total : {(order.total).toLocaleString(undefined, {minimumFractionDigits: 0})} VND
+                        </p>
             </div>
             <motion.div className={"absolute top-0 -right-3 z-20 transform-all flex-col gap-0.5"}
                 animate={{
@@ -81,7 +84,9 @@ const OrderItem = (props: {order: IReceipt, index: number, fetcher: CallableFunc
     )
 }
 
-const Orders = () => {
+const Orders = (props: {blockFn?: boolean}) => {
+    let {blockFn} = props
+    if (blockFn == undefined) blockFn = false;
     const [orders, setOrders] = useState([])
     const [fetchOpt, setFetch] = useState<fetchProps>({
         method: "get",
@@ -104,13 +109,19 @@ const Orders = () => {
     }, [data])
 
     return (
-        <div className={"py-6"}>
+        <div className={"py-6 relative h-full"}>
             <h1 className={"text-3xl mb-6"}>Orders</h1>
-            <div className={"grid grid-cols-5 gap-4"}>
+            {orders.length > 0 && <div className={"grid grid-cols-5 gap-4 max-h-full overflow-y-scroll pr-4"}>
                 {
-                    orders.length > 0 && orders.map((order, i)=>(<OrderItem fetcher={setFetch} order={order} index={orders.length - i} key={i}/>))
+                    orders.length > 0 && orders.map((order, i) => (
+                        <OrderItem isBlock={blockFn} fetcher={setFetch} order={order} index={orders.length - i} key={i}/>))
                 }
-            </div>
+            </div>}
+            {
+                orders.length == 0 && <p>
+                    There is no order yet.
+                </p>
+            }
         </div>
     );
 };

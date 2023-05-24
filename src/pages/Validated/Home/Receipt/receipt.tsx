@@ -282,11 +282,12 @@ const Receipt = () => {
                         </div>
                     </div>
                     <div className={"transition-all flex gap-4"}>
-                        <button
+                        <motion.button
+                            animate={{width: cart.state == "checkout" ? "0" : "100%", display: cart.state == "checkout" ? "none" : "block", opacity: cart.state == "checkout" ? "0" : "1"}}
                             onClick={cancelHandler}
-                            className={"w-full bg-amber-100 hover:bg-white text-amber-900 p-3 mt-2 rounded text-xl transition-all"}>
+                            className={"bg-amber-100 hover:bg-white text-amber-900 p-3 mt-2 rounded text-xl transition-all"}>
                             Cancel
-                        </button>
+                        </motion.button>
 
                         <button
                             onClick={()=> {
